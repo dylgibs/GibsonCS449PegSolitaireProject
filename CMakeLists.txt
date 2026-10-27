@@ -1,61 +1,38 @@
+cmake_minimum_required(VERSION 3.16)
+project(PegSolitaire LANGUAGES CXX)
 
-# Specifies the minimum version of CMake required to build the project.
-cmake_minimum_required(VERSION 3.14)
-
-# Gives the project the name "PegSolitaireTests".
-project(PegSolitaireTests)
-
-# Tells CMake to use the C++17 standard when compiling the project.
 set(CMAKE_CXX_STANDARD 17)
-
-# Requires the compiler to support the C++17 standard.
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTOUIC ON)
+set(CMAKE_AUTORCC ON)
 
-# Generates a compile_commands.json file containing the compiler commands used to build the project. 
-# Here for debugging purposes while I was getting this to work.
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+# Works with Qt 6 or Qt 5.15+
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets Test)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Test)
 
-# Loads CMake's FetchContent module, which allows external libraries to be downloaded and included automatically.
-include(FetchContent)
-
-# Specifies GoogleTest as an external dependency.
-FetchContent_Declare(
-  googletest
-
-  # Downloads version 1.17.0 of GoogleTest from its GitHub repository.
-  URL https://github.com/google/googletest/archive/refs/tags/v1.17.0.zip
-
-  # Uses the time that the files are extracted rather than the timestamps stored in the downloaded archive.
-  DOWNLOAD_EXTRACT_TIMESTAMP TRUE
-)
-
-# Tells GoogleTest to use the same C runtime library settings as the rest of the project.
-set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
-
-# Downloads GoogleTest if necessary and makes it available to the project.
-FetchContent_MakeAvailable(googletest)
-
-# Enables CMake's testing functionality.
 enable_testing()
 
-# Creates an executable named PegBoard_test.
-
-# PegBoard_test.cpp contains the GoogleTest unit tests.
-add_executable(
-  PegBoard_test
-  PegBoard_test.cpp
+# ---- Game logic: pure C++, no Qt ----
+add_library(pegcore STATIC
+    src/core/Move.h
+    src/core/BoardLayout.h
+    src/core/BoardLayout.cpp
+    src/core/Game.h
+    src/core/Game.cpp
 )
+target_include_directories(pegcore PUBLIC src/core)
 
-
-# GTest::gtest_main provides the main() function needed to start the GoogleTest test program.
-target_link_libraries(
-  PegBoard_test
-  GTest::gtest_main
+# ---- GUI (Qt Widgets) ----
+add_executable(PegSolitaire
+    src/gui/main.cpp
+    src/gui/mainwindow.h
+    src/gui/mainwindow.cpp
+    src/gui/mainwindow.ui
 )
+target_link_libraries(PegSolitaire PRIVATE pegcore Qt${QT_VERSION_MAJOR}::Widgets)
 
-# Loads CMake's GoogleTest integration functionality.
-include(GoogleTest)
-
-# Automatically discovers the individual GoogleTest tests in PegBoard_test and makes them available to CTest.
-gtest_discover_tests(PegBoard_test)
-
+# ---- Unit tests (QtTest, xUnit style) ----
+add_executable(tst_game tests/tst_game.cpp)
+target_link_libraries(tst_game PRIVATE pegcore Qt${QT_VERSION_MAJOR}::Test)
+add_test(NAME tst_game COMMAND tst_game)

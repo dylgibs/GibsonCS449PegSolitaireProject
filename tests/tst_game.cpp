@@ -7,45 +7,7 @@ class TestGame : public QObject {
     Q_OBJECT
 
 private slots:
-    //  layouts
-    // AC 4.3 - Allow additional moves
-    void additionalMovesAllowedAfterValidMove() {
-        Game g;
-        QVERIFY(g.makeMove({{3, 1}, {3, 3}}));        // first jump
-        QVERIFY(!g.isGameOver());                     // game continues
-        QVERIFY(!g.allValidMoves().empty());          // more moves are available
-
-        QVERIFY(g.makeMove({{1, 2}, {3, 2}}));        // second jump is accepted
-        QCOMPARE(g.cellAt({1, 2}), CellState::Empty);
-        QCOMPARE(g.cellAt({2, 2}), CellState::Empty); // jumped peg removed
-        QCOMPARE(g.cellAt({3, 2}), CellState::Peg);
-        QCOMPARE(g.pegCount(), 30);
-        QCOMPARE(g.moveCount(), 2);
-    }
-
-    // AC 5.3 - Restart the game after a win/fail state
-    void restartAfterGameOverKeepsConfiguration() {
-        // Tiny board: one jump ends the game with a win.
-        Game g(BoardLayout("mini", {"..."}, {0, 2}));
-        QVERIFY(g.makeMove({{0, 0}, {0, 2}}));
-        QVERIFY(g.isGameOver());
-
-        g.newGame();                                  // restart
-        QVERIFY(!g.isGameOver());
-        QCOMPARE(g.pegCount(), 2);
-        QCOMPARE(g.moveCount(), 0);
-        QCOMPARE(g.cellAt({0, 2}), CellState::Empty);
-        QCOMPARE(g.layout().name(), std::string("mini"));
-        QVERIFY(g.makeMove({{0, 0}, {0, 2}}));        // playable again
-
-        // Same restart behaviour on the 9x9 board.
-        Game big(BoardLayout::large());
-        QVERIFY(big.makeMove({{4, 2}, {4, 4}}));
-        big.newGame();
-        QCOMPARE(big.rows(), 9);
-        QCOMPARE(big.pegCount(), 56);
-        QCOMPARE(big.moveCount(), 0);
-    }
+    // layouts
     void standardLayoutHas33Holes() {
         QCOMPARE(BoardLayout::standard().holeCount(), 33);
         QCOMPARE(BoardLayout::standard().rows(), 7);
@@ -57,8 +19,8 @@ private slots:
         QCOMPARE(l.cols(), 9);
     }
     void createMapsBoardTypes() {
-        QCOMPARE(BoardLayout::create(BoardType::Standard).holeCount(), 33);
-        QCOMPARE(BoardLayout::create(BoardType::Large).holeCount(), 57);
+        QCOMPARE(BoardLayout::create(BoardSize::Standard).holeCount(), 33);
+        QCOMPARE(BoardLayout::create(BoardSize::Large).holeCount(), 57);
     }
     void invalidLayoutsThrow() {
         QVERIFY_EXCEPTION_THROWN(BoardLayout("x", {}, {0, 0}), std::invalid_argument);
@@ -66,7 +28,7 @@ private slots:
         QVERIFY_EXCEPTION_THROWN(BoardLayout("x", {"#."}, {0, 0}), std::invalid_argument);
     }
 
-    // ---- new game ----
+    //  new game
     void newGameStandardInitialState() {
         Game g(BoardLayout::standard());
         QCOMPARE(g.pegCount(), 32);
@@ -97,7 +59,7 @@ private slots:
         QCOMPARE(g.pegCount(), 56);
     }
 
-    // ---- moves ----
+    //  moves
     void initialStandardHasFourMoves() {
         Game g;
         QCOMPARE(int(g.allValidMoves().size()), 4);
@@ -191,6 +153,43 @@ private slots:
         QVERIFY(g.makeMove({{0, 0}, {0, 2}}));
         QVERIFY(g.allValidMoves().empty());
         QVERIFY(!g.makeMove({{0, 2}, {0, 0}}));
+    }
+
+    // Allow additional moves
+    void additionalMovesAllowedAfterValidMove() {
+        Game g;
+        QVERIFY(g.makeMove({{3, 1}, {3, 3}}));        // first jump
+        QVERIFY(!g.isGameOver());                     // game continues
+        QVERIFY(!g.allValidMoves().empty());          // more moves are available
+
+        QVERIFY(g.makeMove({{1, 2}, {3, 2}}));        // second jump is accepted
+        QCOMPARE(g.cellAt({1, 2}), CellState::Empty);
+        QCOMPARE(g.cellAt({2, 2}), CellState::Empty); // jumped peg removed
+        QCOMPARE(g.cellAt({3, 2}), CellState::Peg);
+        QCOMPARE(g.pegCount(), 30);
+        QCOMPARE(g.moveCount(), 2);
+    }
+
+    // Restart the game after a win/fail state
+    void restartAfterGameOverKeepsConfiguration() {
+        Game g(BoardLayout("mini", {"..."}, {0, 2}));
+        QVERIFY(g.makeMove({{0, 0}, {0, 2}}));
+        QVERIFY(g.isGameOver());
+
+        g.newGame();                                  // restart
+        QVERIFY(!g.isGameOver());
+        QCOMPARE(g.pegCount(), 2);
+        QCOMPARE(g.moveCount(), 0);
+        QCOMPARE(g.cellAt({0, 2}), CellState::Empty);
+        QCOMPARE(g.layout().name(), std::string("mini"));
+        QVERIFY(g.makeMove({{0, 0}, {0, 2}}));        // playable again
+
+        Game big(BoardLayout::large());
+        QVERIFY(big.makeMove({{4, 2}, {4, 4}}));
+        big.newGame();
+        QCOMPARE(big.rows(), 9);
+        QCOMPARE(big.pegCount(), 56);
+        QCOMPARE(big.moveCount(), 0);
     }
 };
 

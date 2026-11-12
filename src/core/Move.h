@@ -1,7 +1,7 @@
 #pragma once
 
-// Plain value types shared by the game logic and the UI
-// No Qt dependency: the core library is pure standard C++
+// Plain value types shared by the game logic and the UI.
+// No Qt dependency: the core library is pure standard C++.
 
 struct Position {
     int row = 0;
@@ -12,12 +12,12 @@ struct Position {
 };
 
 // A move is a peg jumping from `from` over an adjacent peg into `to`
-// (exactly two cells away along one of the layout's directions)
+// (exactly two cells away along one of the layout's directions).
 struct Move {
     Position from;
     Position to;
 
-    // The cell that is jumped over and removed
+    // The cell that is jumped over (and removed).
     Position jumped() const {
         return Position{(from.row + to.row) / 2, (from.col + to.col) / 2};
     }

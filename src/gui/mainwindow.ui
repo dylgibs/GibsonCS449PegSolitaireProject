@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>520</width>
-    <height>740</height>
+    <width>540</width>
+    <height>860</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -57,7 +57,14 @@
        </widget>
       </item>
       <item>
-       <layout class="QVBoxLayout" name="boardTypeLayout">
+       <layout class="QVBoxLayout" name="boardSizeLayout">
+        <item>
+         <widget class="QLabel" name="sizeLabel">
+          <property name="text">
+           <string>Board size</string>
+          </property>
+         </widget>
+        </item>
         <item>
          <widget class="QRadioButton" name="radioStandard">
           <property name="text">
@@ -72,6 +79,34 @@
          <widget class="QRadioButton" name="radioLarge">
           <property name="text">
            <string>9x9 Board</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QVBoxLayout" name="boardTypeLayout">
+        <item>
+         <widget class="QLabel" name="typeLabel">
+          <property name="text">
+           <string>Board type</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QRadioButton" name="radioEnglish">
+          <property name="text">
+           <string>English Board</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QRadioButton" name="radioHex">
+          <property name="text">
+           <string>Hexagonal Board</string>
           </property>
          </widget>
         </item>
@@ -110,6 +145,103 @@
        <set>Qt::AlignCenter</set>
       </property>
      </widget>
+    </item>
+    <item>
+     <widget class="QWidget" name="replayPanel" native="true">
+      <property name="visible">
+       <bool>false</bool>
+      </property>
+      <layout class="QVBoxLayout" name="replayPanelLayout">
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
+       <item>
+        <widget class="QLabel" name="replayInfoLabel">
+         <property name="text">
+          <string/>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="replayButtonsLayout">
+         <item>
+          <widget class="QPushButton" name="replayStartButton">
+           <property name="text">
+            <string>|◀ Start</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="replayBackButton">
+           <property name="text">
+            <string>◀ Back</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="replayPlayButton">
+           <property name="text">
+            <string>Play</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="replayForwardButton">
+           <property name="text">
+            <string>Step ▶</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QPushButton" name="replayExitButton">
+         <property name="text">
+          <string>Exit Replay</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="actionLayout">
+      <item>
+       <widget class="QPushButton" name="randomStartButton">
+        <property name="toolTip">
+         <string>Start a new game from a random position of play</string>
+        </property>
+        <property name="text">
+         <string>Random Start</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="autoPlayButton">
+        <property name="toolTip">
+         <string>Let the computer play random moves until the game ends</string>
+        </property>
+        <property name="text">
+         <string>Auto Play</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </item>
     <item>
      <widget class="QPushButton" name="resetButton">

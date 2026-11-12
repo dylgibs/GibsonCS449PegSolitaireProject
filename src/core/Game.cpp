@@ -16,6 +16,8 @@ void Game::newGame() {
                    std::vector<CellState>(static_cast<size_t>(cols()), CellState::Invalid));
     m_pegCount = 0;
     m_moveCount = 0;
+    m_setupMoves = 0;
+    m_history.clear();
     for (int r = 0; r < rows(); ++r) {
         for (int c = 0; c < cols(); ++c) {
             Position p{r, c};
@@ -47,7 +49,7 @@ bool Game::isValidMove(const Move& m) const {
         if (dr == 2 * d.row && dc == 2 * d.col) { directionOk = true; break; }
     if (!directionOk) return false;
 
-    // cellAt() returns Invalid for off-board or non-hole cells, so those fail below
+    // cellAt() returns Invalid for off-board / non-hole cells, so those fail below.
     return cellAt(m.from) == CellState::Peg &&
            cellAt(m.jumped()) == CellState::Peg &&
            cellAt(m.to) == CellState::Empty;
@@ -60,6 +62,7 @@ bool Game::makeMove(const Move& m) {
     setCell(m.to, CellState::Peg);
     --m_pegCount;
     ++m_moveCount;
+    m_history.push_back(m);
     return true;
 }
 
